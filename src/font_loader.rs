@@ -13,11 +13,10 @@ impl AssetLoader for FontLoader {
         load_context: &'a mut LoadContext,
     ) -> BoxedFuture<'a, Result<()>> {
         let bytes: Vec<u8> = bytes.into();
-        let bytes = bytes.leak();
 
         Box::pin(async move {
             // standard bevy_text/src/font_loader code
-            let font = Font::try_from_bytes(bytes.into())?;
+            let font = Font::try_from_bytes(bytes.clone())?;
             load_context.set_default_asset(LoadedAsset::new(font));
 
             let common =
@@ -45,7 +44,7 @@ impl AssetLoader for FontLoader {
 #[derive(TypeUuid)]
 #[uuid = "5415ac03-d009-471e-89ab-dc0d4e31a8c4"]
 pub struct TextMeshFont {
-    pub(crate) ttf_font_generator: meshtext::MeshGenerator,
+    pub(crate) ttf_font_generator: meshtext::MeshGenerator<meshtext::OwnedFace>,
 }
 
 impl std::fmt::Debug for TextMeshFont {
